@@ -1,5 +1,9 @@
 # Evermatter company website
 
+Current site: all five routes now share the selected white/green panorama design. `npm run build` runs `scripts/build-unified.mjs`; page content and shared components are in `src/site/`, with the approved homepage retained in `src/home/home.html`. The original compiled reference files remain as historical source, not the active inner-page renderer.
+
+The circular header mark and favicon are generated from the original logo with an undistorted SVG viewport. AMBC photography is in `src/assets/ambc-pitch.jpg`. The active process film is `src/assets/evermatter-process-clean.mp4`, encoded from raw frames without watermarks or baked labels. Captions describe the visible process. Research-development status remains in body copy. The old video URL is served the clean export too.
+
 Standalone reconstruction of the company-owned reference website, preserving its dark teal/lime visual identity. Five routes: Home, Technology, About, Milestones and Contact. No Alibaba tracking, platform banner, external image services or backend dependencies.
 
 ## Build and preview
