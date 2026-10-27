@@ -1,0 +1,29 @@
+const picture=(name,alt,caption)=>`<figure class="technical-picture"><img src="assets/home/${name}.jpg" alt="${alt}" loading="lazy"><figcaption>${caption}</figcaption></figure>`;
+const qualifier=text=>`<p class="qualification">${text}</p>`;
+export const panels=[
+  {key:'modular',title:'Built as modules. Integrated as a system.',html:()=>`
+    <div class="matched-pictures">
+      <article>${picture('columns','Four ion-exchange columns connected by common valves and manifolds','Alternating-column capture module · Concept render')}<h4>Columns work in alternating duties.</h4><p>The proposed adsorption and elution cycle shares a multi-column module, rather than treating each column as a standalone plant.</p></article>
+      <article>${picture('system','Complete conceptual system linking the column skid, heat exchanger and crystalliser','Capture, heat exchange and crystallisation · Concept render')}<h4>The modules form one recovery train.</h4><p>The full installation brings the capture module together with the thermal and crystallisation stages for integration at a partner site.</p></article>
+    </div>${qualifier('Concept equipment only. Column count, sizing, capacity and integration are subject to site-specific engineering.')}`},
+  {key:'hf',title:'Recover the anion. Avoid an HF synthesis feed.',html:()=>`
+    <figure class="route-graphic" aria-label="Concept comparison of an HF-based virgin LiPF6 production route and the proposed Evermatter KPF6 recovery route">
+      <div class="chemical-route virgin"><div class="route-caption"><strong>Virgin LiPF₆ production</strong><span>HF-based route used as the comparator</span></div><div class="route-steps"><div class="route-node"><span class="chemical-symbol">HF</span><strong>Primary synthesis feed</strong></div><span class="route-arrow" aria-hidden="true">→</span><div class="route-node"><strong>Electrolyte-salt synthesis</strong><span>Virgin production route</span></div><span class="route-arrow" aria-hidden="true">→</span><div class="route-node product"><span class="chemical-symbol">LiPF₆</span><strong>Lithium salt</strong></div></div></div>
+      <div class="chemical-route recovery"><div class="route-caption"><strong>Evermatter recovery</strong><span>No HF feedstock in the proposed route</span></div><div class="route-steps"><div class="route-node"><span class="chemical-symbol">PF₆⁻</span><strong>Already in wastewater</strong></div><span class="route-arrow" aria-hidden="true">→</span><div class="route-node"><strong>Capture · Elution · Crystallisation</strong><span>No intended HF-generating synthesis step</span></div><span class="route-arrow" aria-hidden="true">→</span><div class="route-node product"><span class="chemical-symbol">KPF₆</span><strong>Potassium salt</strong></div></div></div>
+      <figcaption>Concept route comparison, not a balanced reaction or product-equivalence claim. Recovered KPF₆ is not finished LiPF₆.</figcaption>
+    </figure>${qualifier('Process-design basis, not a measured zero-HF-emissions claim. Operating chemistry and appropriate HF handling will be checked during pilot development.')}`},
+  {key:'energy',title:'Targeted heat. Ambient crystallisation.',html:()=>`
+    <div class="matched-pictures energy-pictures">
+      <article>${picture('heat','Heat-exchanger plates and associated thermal piping in the proposed recovery process','Thermal elution and heat exchange · Concept render')}<h4>Thermal elution, then heat exchange.</h4><p>Captured material is released in the proposed thermal-elution stage. Heat exchange conditions the rich eluate before crystallisation.</p></article>
+      <article>${picture('crystalliser','Cutaway of the proposed crystalliser and its circulating product bed','Proposed ambient-temperature crystallisation · Concept render')}<h4>Crystallisation at ambient temperature.</h4><p>Ambient crystallisation is proposed to limit the thermal demand of the recovery stage. The lower-energy objective will be tested across the full train.</p></article>
+    </div><div class="thermal-path" aria-label="Proposed thermal sequence"><span>Thermal elution</span><span aria-hidden="true">→</span><span>Heat exchange</span><span aria-hidden="true">→</span><span>Ambient crystallisation</span></div>${qualifier('Lower energy is a design objective. Whole-process energy demand and any saving require comparative validation.')}`},
+  {key:'resources',title:'A product stream, not just a disposal cost.',html:()=>`
+    <div class="resource-visual">
+      ${picture('crystalliser','Original concept rendering of the proposed KPF6 crystallisation stage','KPF₆ recovery stage · Concept render, not a product photograph')}
+      <div class="material-map" role="img" aria-label="Concept material flow: PF6-bearing battery wastewater enters selective recovery, with a KPF6 product target, a resin-reuse target and a remaining water stream requiring further treatment"><div class="material-source"><span class="water-swatch" aria-hidden="true"></span><strong>Battery wastewater</strong><span>PF₆⁻-bearing feed</span></div><span class="map-arrow" aria-hidden="true">↓</span><div class="recovery-node">Selective capture<br>and proposed regeneration</div><div class="material-outputs"><div><strong>KPF₆ recovery</strong><span>Product target</span></div><div><strong>Resin reuse</strong><span>Development target</span></div><div><strong>Remaining water</strong><span>Further treatment</span></div></div></div>
+    </div>${qualifier('Concept material flow. Regeneration, product quality and residual-stream handling require validation. Environmental benefit has not yet been quantified.')}`}
+];
+export function renderAdvantage(container,index){
+  const panel=panels[index];
+  container.innerHTML=`<div class="adv-panel" data-visual="${panel.key}"><h3>${panel.title}</h3>${panel.html()}</div>`;
+}

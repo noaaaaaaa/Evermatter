@@ -32,6 +32,10 @@ const processEnd=app.indexOf('f.jsx("section",{className:"py-20 md:py-28",childr
 if(processStart<0||processEnd<0)throw new Error('Technology process replacement anchor missing');
 app=app.slice(0,processStart)+'f.jsx(EvermatterProcess,{}),'+app.slice(processEnd);
 replace('const h4=','const EvermatterProcess=createProcessExperience(P),EvermatterProcessTeaser=createProcessTeaser(P);const h4=');
+// The selected homepage is static and independently styled. Client-side Home links
+// from legacy inner pages must return to that document, not render the old Home.
+replace('{path:"/",element:f.jsx(jm,{})}','{path:"/",element:f.jsx(EvermatterHomeReload,{})}');
+app='function EvermatterHomeReload(){P.useEffect(()=>{location.replace(window.__EVERMATTER_BASE__||"/")},[]);return null;}\n'+app;
 const homeStart=app.indexOf('function jm(){');
 const homeInsertion=app.indexOf('f.jsx("section",{className:"border-y',homeStart);
 if(homeStart<0||homeInsertion<0)throw new Error('Home teaser anchor missing');
@@ -46,6 +50,12 @@ app="import {createProcessExperience,createProcessTeaser} from './process-experi
 await writeFile(path.join(out,'assets/app.js'),app);
 await writeFile(path.join(out,'assets/app.css'),await readFile(path.join(root,'src/reference.css'),'utf8')+'\n'+await readFile(path.join(root,'src/process-experience.css'),'utf8'));
 await cp(path.join(root,'src/process-experience.js'),path.join(out,'assets/process-experience.js'));
+// Publish raster exports only; renderer comments can expose local source paths.
+for(const photo of ['resin','columns','heat','crystalliser','system','electric-car']){
+  const bytes=await readFile(path.join(root,'src/assets/home',photo+'.jpg'));
+  if(bytes.readUInt16BE(0)!==0xffd8)throw new Error('Expected JPEG web export: '+photo);
+  if(bytes.includes(Buffer.from('Blender:'))||bytes.includes(Buffer.from('C:\\Users\\')))throw new Error('Remove renderer/path metadata before publication: '+photo);
+}
 await cp(path.join(root,'src/assets'),path.join(out,'assets'),{recursive:true});
 const html=`<!doctype html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -56,6 +66,10 @@ const html=`<!doctype html>
 <script type="module" src="assets/app.js"></script></head><body><div id="root"></div>
 <noscript>Please enable JavaScript to view this website. Contact postmaster@evermatter.tech.</noscript></body></html>`;
 for(const route of ['', 'technology','about','milestones','contact']){await mkdir(path.join(out,route),{recursive:true});await writeFile(path.join(out,route,'index.html'),html);}
+await writeFile(path.join(out,'index.html'),await readFile(path.join(root,'src/home/home.html'),'utf8'));
+await writeFile(path.join(out,'assets/home/home-v3.css'),await readFile(path.join(root,'src/home/base.css'),'utf8')+'\n'+await readFile(path.join(root,'src/home/advantages.css'),'utf8'));
+await cp(path.join(root,'src/home/home.js'),path.join(out,'assets/home/home-v3.js'));
+await cp(path.join(root,'src/home/advantages.js'),path.join(out,'assets/home/advantages-v3.js'));
 await writeFile(path.join(out,'404.html'),html);
 await writeFile(path.join(out,'.nojekyll'),'');
 await writeFile(path.join(out,'robots.txt'),'User-agent: *\nAllow: /\nSitemap: https://evermatter.tech/sitemap.xml\n');
