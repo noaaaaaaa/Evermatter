@@ -26,8 +26,26 @@ app=app.replace(/f\.jsx\("img",\{src:"assets\/(?:lab|skid|powder)\.jpg",alt:"[^"
 replace('Sb(h4)','Sb(h4,{basename:window.__EVERMATTER_BASE__||"/"})');
 replace('l=d=>{d.preventDefault(),a()&&o(!0)}','l=d=>{d.preventDefault();if(a()){const subject="Evermatter enquiry — "+e.name;const body="Name: "+e.name+"\\nEmail: "+e.email+"\\nOrganisation: "+e.organization+"\\n\\n"+e.message;window.location.href="mailto:"+Ye.email+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);o(!0)}}');
 if(/https:\/\/(?:material-image|baas-api)\./.test(app))throw new Error('Unlocalised asset');
+// Replace the old three-card process with the approved V2 film and timed explanation.
+const processStart=app.indexOf('f.jsx("section",{className:"border-y border-brand-hairline bg-brand-surface/40 py-20 md:py-28",children:f.jsxs("div",{className:"mx-auto max-w-container px-6",children:[f.jsx(ft,{eyebrow:"Our process",title:"Three steps from wastewater to product"');
+const processEnd=app.indexOf('f.jsx("section",{className:"py-20 md:py-28",children:f.jsxs("div",{className:"mx-auto max-w-container px-6",children:[f.jsx(ft,{eyebrow:"Cost advantage"',processStart);
+if(processStart<0||processEnd<0)throw new Error('Technology process replacement anchor missing');
+app=app.slice(0,processStart)+'f.jsx(EvermatterProcess,{}),'+app.slice(processEnd);
+replace('const h4=','const EvermatterProcess=createProcessExperience(P),EvermatterProcessTeaser=createProcessTeaser(P);const h4=');
+const homeStart=app.indexOf('function jm(){');
+const homeInsertion=app.indexOf('f.jsx("section",{className:"border-y',homeStart);
+if(homeStart<0||homeInsertion<0)throw new Error('Home teaser anchor missing');
+app=app.slice(0,homeInsertion)+'f.jsx(EvermatterProcessTeaser,{}),'+app.slice(homeInsertion);
+// The same image URL occurs on home and technology: keep the established composition,
+// but show the approved model rather than the previous generic generated skid.
+app=app.replace(/f\.jsxs\("figure",\{className:"h-full",children:\[f\.jsx\("img",\{src:"assets\/skid\.jpg",alt:"[^"]*",className:"[^"]*"(?:,loading:"lazy")?\}\),f\.jsx\("figcaption",\{[^}]*\}\)\]\}\)/g,
+  'f.jsx(dt,{to:"/technology#recovery-process",className:"em-process-home",children:f.jsxs("figure",{children:[f.jsx("img",{src:"assets/process-poster.jpg",alt:"Concept installation of Evermatter multi-column recovery system",loading:"lazy"}),f.jsxs("figcaption",{children:["Explore the recovery system",f.jsx("small",{children:"Watch the proposed process, from resin capture to integrated recovery. Concept visualisation."})]})]})})');
+app=app.replace(/f\.jsx\("img",\{src:"assets\/skid\.jpg",alt:"[^"]*",className:"[^"]*",loading:"lazy"\}\)/g,
+  'f.jsx(dt,{to:"/technology#recovery-process",className:"em-process-home",children:f.jsxs("figure",{children:[f.jsx("img",{src:"assets/process-poster.jpg",alt:"Concept installation of Evermatter multi-column recovery system",loading:"lazy"}),f.jsx("figcaption",{children:"Explore the recovery system · Concept visualisation"})]})})');
+app="import {createProcessExperience,createProcessTeaser} from './process-experience.js';\n"+app;
 await writeFile(path.join(out,'assets/app.js'),app);
-await cp(path.join(root,'src/reference.css'),path.join(out,'assets/app.css'));
+await writeFile(path.join(out,'assets/app.css'),await readFile(path.join(root,'src/reference.css'),'utf8')+'\n'+await readFile(path.join(root,'src/process-experience.css'),'utf8'));
+await cp(path.join(root,'src/process-experience.js'),path.join(out,'assets/process-experience.js'));
 await cp(path.join(root,'src/assets'),path.join(out,'assets'),{recursive:true});
 const html=`<!doctype html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
